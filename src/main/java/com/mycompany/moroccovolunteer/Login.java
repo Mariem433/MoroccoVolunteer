@@ -16,6 +16,7 @@ import javax.naming.*;
 import javax.sql.*;
 import java.sql.*;
 import java.text.SimpleDateFormat;
+import javax.servlet.http.HttpSession;
 /**
  *
  * @author johnnyofhyrule93
@@ -80,7 +81,11 @@ public class Login extends HttpServlet {
                                out.println("todo");
                             }
                             else{
-                                response.sendRedirect("organization.html");
+                                HttpSession session = request.getSession();
+                                int id = rst.getInt("organizationId");
+                                session.setAttribute("id", id);
+                                session.setAttribute("role", role);
+                                response.sendRedirect("organization.jsp");
                             }
                         }
                         else{
