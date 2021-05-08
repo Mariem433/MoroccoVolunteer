@@ -45,7 +45,11 @@ public class Events extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Events</title>");            
+            out.println("<link rel=\"stylesheet\" href=\"https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css\" integrity=\"sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh\" crossorigin=\"anonymous\">");
+            out.println("<link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css?family=Montserrat:400,400i,700,700i,600,600i\">");
+            out.println("<link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.css\">");
+            out.println("<link rel=\"stylesheet\" href=\"assets/css/styles.min.css\">");
+            out.println("<title>Events</title>");            
             out.println("</head>");
             out.println("<body>");
             try {
@@ -56,33 +60,75 @@ public class Events extends HttpServlet {
             // /jdbc/postgres is the name of the resource in context.xml
                 DataSource ds = (DataSource)
                 ctx.lookup("java:/comp/env/jdbc/postgres");
+                
                 if (ds != null) {
                     Connection conn = ds.getConnection();
                     if (conn != null) {
-                        out.println("<table>");
+                        out.println("<div class=\"container\" style=\"text-align: center;\">\n" +
+"            <h1>Events</h1>\n" +
+"         </div>");
+                        out.println("<div class=\"row justify-content-center\" style=\"margin-top: 10px;margin-right: 0px;margin-left: 0px;\">");
+                        
                         Statement stmt = conn.createStatement();
                         ResultSet rst = stmt.executeQuery("SELECT "
-                                + "* From Event");
-                        out.println("<tr><th>Events Plain HTML</th><th>"
-                                + "Description</th><th>Price</th></tr>");
+                                + "eventId, organizationName, name, E.description, eventlocation, eventdate, field"
+                                + " From Event AS E INNER JOIN Organization AS O ON O.organizationId = E.organizationId");
                         while (rst.next()) {
-                            out.print("<tr>");
-                            out.print("<td>" + rst.getString(2) + "</td>");
-                            out.print("<td>" + rst.getString(3) + "</td>");
-                            out.print("<td>" + rst.getString(4) + "</td>");
-                            out.print("<td>" + rst.getString(6) + "</td>");
-                            if(session.getAttribute("role").equals("Organization")){
-                                out.print("<td>" + rst.getString(6) + "</td>");//This will be modified later for html to be displayed in a special way
-                                /*I will try to implement form submit with a hidden input for the id to pass it between servlet
-                                specifically the Events and Eventpage servlet(will display details about an event like positions,
-                                and such details)*/
-                                
-                                
-                            }
-                            out.print("</tr>\n");
+                            out.println("<div class=\"col-sm-6 col-lg-4\" style=\"margin-top: 35px;\">");
+                            out.println("<div class=\"card clean-card text-center\">");
+                            out.println("<div class=\"card-body info\">");
+                            out.println("<h4 class=\"card-title\">"+rst.getString(3)+"</h4>");
+                            out.println("<div class=\"row\">\n" +
+"                        <div class=\"col\">\n" +
+"                           <p>Organizer</p>\n" +
+"                        </div>\n" +
+"                        <div class=\"col\">\n" +
+"                           <p class=\"text-primary\">"+rst.getString(2)+"</p>\n" +
+"                        </div>\n" +
+"                     </div>");
+                            out.println("<div class=\"row\">\n" +
+"                        <div class=\"col\">\n" +
+"                           <p>Location</p>\n" +
+"                        </div>\n" +
+"                        <div class=\"col\">\n" +
+"                           <p class=\"text-primary\">"+rst.getString(5)+"</p>\n" +
+"                        </div>\n" +
+"                     </div>");
+                            out.println("<div class=\"row\">\n" +
+"                        <div class=\"col\">\n" +
+"                           <p>Description</p>\n" +
+"                        </div>\n" +
+"                        <div class=\"col\">\n" +
+"                           <p class=\"text-primary\">"+rst.getString(4)+"</p>\n" +
+"                        </div>\n" +
+"                     </div>");
+                            out.println("<div class=\"row\">\n" +
+"                        <div class=\"col\">\n" +
+"                           <p>Date</p>\n" +
+"                        </div>\n" +
+"                        <div class=\"col\">\n" +
+"                           <p class=\"text-primary\">"+rst.getDate(6)+"</p>\n" +
+"                        </div>\n" +
+"                     </div>");
+                            out.println("<div class=\"row\">\n" +
+"                        <div class=\"col\">\n" +
+"                           <p>Field</p>\n" +
+"                        </div>\n" +
+"                        <div class=\"col\">\n" +
+"                           <p class=\"text-primary\">"+rst.getString(7)+"</p>\n" +
+"                        </div>\n" +
+"                     </div>");
+                            out.println("</div>\n");
+                            out.print("<form action='./eventpage'>");
+                            out.print("<input type='hidden' name='eventId' value='" +rst.getInt(1)+"'>");
+                 out.println(" <button class=\"btn btn-primary overlay\" type=\"submit\"><i class=\"fas fa-plus\"></i>&nbsp;More details</button>\n" +
+                         "</form>\n"+
+"               </div>\n" +
+"            </div>\n");
                         }
                         conn.close();
-                        out.println("</table>");
+                        out.println("</div>");
+                        
                     } 
                     else {
                         out.println("Error: conn is null ");

@@ -7,22 +7,28 @@ package com.mycompany.moroccovolunteer;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.naming.*;
-import javax.sql.*;
-import java.sql.*;
-import java.text.SimpleDateFormat;
 import javax.servlet.http.HttpSession;
+import javax.sql.DataSource;
+
 /**
  *
  * @author johnnyofhyrule93
  */
-@WebServlet(name = "login", urlPatterns = {"/login"})
-public class Login extends HttpServlet {
+@WebServlet(name = "PositionApply", urlPatterns = {"/positionapply"})
+public class PositionApply extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -36,15 +42,8 @@ public class Login extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String qry;
         try ( PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet login</title>");            
-            out.println("</head>");
-            out.println("<body>");
             try {
                 Context ctx = new InitialContext();
                 if (ctx == null) {
@@ -57,45 +56,15 @@ public class Login extends HttpServlet {
                     Connection conn = ds.getConnection();
                     if (conn != null) {
                     // the insert statement
-                        
-                   // create the insert preparedstatement
-                        
-                        
-                        String email = request.getParameter("email");
-                        String pass = request.getParameter("password");
-                        String role = request.getParameter("role");
-                        if(role.equals("Volunteer")){
-                            qry = "SELECT * FROM volunteerLogin WHERE"
-                                    + " volunteerEmail = (?) AND password = (?);";
-                        }
-                        else{
-                            qry = "SELECT * FROM OrganizationLogin WHERE"
-                                    + " organizationEmail = (?) AND password = (?);";
-                        }
+                        HttpSession session = request.getSession();
+                        String qry = "INSERT INTO Application(volunteerId,positionId) VALUES"
+                        + "(?,?);";
                         PreparedStatement prepStmt = conn.prepareStatement(qry);
-                        prepStmt.setString(1,email);
-                        prepStmt.setString(2,pass);
-                        ResultSet rst = prepStmt.executeQuery();
-                        if(rst.next()){
-                            if(role.equals("Volunteer")){
-                               out.println("todo");
-                               HttpSession session = request.getSession();
-                               int id = rst.getInt("volunteerId");
-                               session.setAttribute("id", id);
-                               session.setAttribute("role", role);
-                            }
-                            else{
-                                HttpSession session = request.getSession();
-                                int id = rst.getInt("organizationId");
-                                session.setAttribute("id", id);
-                                session.setAttribute("role", role);
-                                response.sendRedirect("organization.jsp");
-                            }
-                        }
-                        else{
-                            out.println("Login failed successfully");
-                        }
+                        prepStmt.setInt(1,(int)session.getAttribute("id"));
+                        prepStmt.setInt(2,Integer.parseInt(request.getParameter("positionId")));
+                        prepStmt.execute();
                         
+                        response.sendRedirect("login.html");//change this to profile, specifically manage applications
                     } // end of try
                 }
             }
@@ -107,10 +76,7 @@ public class Login extends HttpServlet {
                 out.println("Exception caught");
                 out.println(e.toString());
             }
-            out.println("</body>");
-            out.println("</html>");
-            out.println("</body>");
-            out.println("</html>");
+            
         }
     }
 

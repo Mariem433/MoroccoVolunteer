@@ -35,6 +35,7 @@ public class OrgSignup extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        
         try ( PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
@@ -55,16 +56,10 @@ public class OrgSignup extends HttpServlet {
                     Connection conn = ds.getConnection();
                     if (conn != null) {
                     // the insert statement
-                        String qry1 = "INSERT INTO Organization "+ " (OrganizationId, "
-                                + "organizationName, description,headquarterAddress,"+ 
-                                " establishmentDate, phoneNumber)"
-                                + " VALUES (?, ?, ?, ?, ?, ?);";
-                        String qry2 = "INSERT INTO OrganizationLogin"+ " (OrganizationId, "
-                                + "organizationEmail, password)"
-                                + " VALUES (?, ?, ?);";
+                        String qry = "CALL procroCreateOrganization (?, ?, ?, ?, ?, ?, ?, ?);";
                    // create the insert preparedstatement
-                        PreparedStatement prepStmt = conn.prepareStatement(qry1);
-                        PreparedStatement prepStmt2 = conn.prepareStatement(qry2);
+                        PreparedStatement prepStmt = conn.prepareStatement(qry);
+                        
                         String name = request.getParameter("name");
                         String adrs = request.getParameter("address");
                         String date = request.getParameter("date");
@@ -86,16 +81,15 @@ public class OrgSignup extends HttpServlet {
                         java.util.Date utilDate = formatdate.parse(date);
                         java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
                         prepStmt.setString(3,desc);
-                        prepStmt.setString(4, adrs);
-                        prepStmt.setDate(5, sqlDate);
+                        prepStmt.setString(5, adrs);
+                        prepStmt.setDate(4, sqlDate);
                         prepStmt.setString(6, num);
-                        prepStmt2.setInt(1, id);
-                        prepStmt2.setString(2, email);
-                        prepStmt2.setString(3, pass);
+                        prepStmt.setString(7, email);
+                        prepStmt.setString(8, pass);
                         // execute the preparedstatement
                         prepStmt.execute();
-                        prepStmt2.execute();
-                        out.println("Organization signup done successfuly ");
+                        
+                        response.sendRedirect("login.html");
                     } // end of try
                 }
             }
