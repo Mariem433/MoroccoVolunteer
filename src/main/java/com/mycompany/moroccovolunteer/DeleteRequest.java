@@ -22,8 +22,8 @@ import javax.servlet.http.HttpSession;
  *
  * @author USER
  */
-@WebServlet(name = "AddEvents", urlPatterns = {"/addevents"})
-public class AddEvents extends HttpServlet {
+@WebServlet(name = "CancelRequest", urlPatterns = {"/cancelrequest"})
+public class DeleteRequest extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -37,15 +37,18 @@ public class AddEvents extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        
+        HttpSession session = request.getSession();
+        String role = (String)session.getAttribute("role");
+        int id = (int)session.getAttribute("id");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet AddEvents</title>");            
+            out.println("<title>Servlet CancelRequest</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Add Event</h1>");
             try {
                 Context ctx = new InitialContext();
                 if (ctx == null) {
@@ -57,41 +60,13 @@ public class AddEvents extends HttpServlet {
             if (ds != null) {
                 Connection conn = ds.getConnection();
                 if (conn != null) {
-                // the insert statement
-                String qry = "INSERT INTO Event " + " (eventId, name, Description, eventLocation, eventDate,field, organizationId)"
-                + " VALUES (?, ?, ?, ?, ?, ?, ?);";
-                // create the insert preparedstatement
-                HttpSession session = request.getSession();
-                PreparedStatement prepStmt = conn.prepareStatement(qry);
-                String name = request.getParameter("name");
-                String Desc = request.getParameter("Description");
-                String eLocat = request.getParameter("eventLocation");
-                String eDate = request.getParameter("eventDate");
-                String field = request.getParameter("Field");
-                int orgId = (int)session.getAttribute("id");
-                prepStmt.setString (2, name);
-                prepStmt.setString (3, Desc);
-                prepStmt.setString (4, eLocat);
-                prepStmt.setString (6, field);
-                SimpleDateFormat formatdate = new SimpleDateFormat("yyyy-MM-dd");
-                java.util.Date utilDate = formatdate.parse(eDate);
-                java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
-                prepStmt.setDate (5, sqlDate);
-                prepStmt.setInt(7, orgId);
-                int eId = 0;
-                     Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
-                     ResultSet.CONCUR_READ_ONLY,ResultSet.HOLD_CURSORS_OVER_COMMIT);
-                     ResultSet x = stmt.executeQuery("SELECT eventId FROM Event");
-                        if(x.last()){
-                            eId = x.getInt("eventId")+1;
-                        }
-                prepStmt.setInt(1,eId);
-                // execute the preparedstatement
-                prepStmt.execute();
-                out.println("<script type=\"text/javascript\">");
-                out.println("alert('Event added suceessfully');");
-                out.println("location='orgevents';");
-                out.println("</script>");
+                Statement stmt1 = conn.createStatement();
+                String positionId = request.getParameter("positionId");
+                String volunteerId = request.getParameter("volunteerId");
+                int rst1 = stmt1.executeUpdate("DELETE FROM Request "
+                                + " WHERE positionId = "+ positionId
+                                + " AND volunteerId = "+volunteerId);
+                out.println("Deleted successfully ");
             } 
         }
     }

@@ -16,13 +16,12 @@ import javax.naming.*;
 import javax.sql.*;
 import java.sql.*;
 import java.text.SimpleDateFormat;
-import javax.servlet.http.HttpSession;
 /**
  *
  * @author johnnyofhyrule93
  */
-@WebServlet(name = "login", urlPatterns = {"/login"})
-public class Login extends HttpServlet {
+@WebServlet(name = "VolSignup", urlPatterns = {"/volsignup"})
+public class VolSignup extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -36,13 +35,12 @@ public class Login extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        String qry;
         try ( PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet login</title>");            
+            out.println("<title>Servlet VolSignup</title>");            
             out.println("</head>");
             out.println("<body>");
             try {
@@ -57,46 +55,40 @@ public class Login extends HttpServlet {
                     Connection conn = ds.getConnection();
                     if (conn != null) {
                     // the insert statement
-                        
+                        String qry = "CALL proAddVolunteer(?,?,?,?,?,?,?,?);";
                    // create the insert preparedstatement
+                        PreparedStatement prepStmt = conn.prepareStatement(qry);
                         
-                        
+                        String firstname = request.getParameter("fname");
+                        String lastname = request.getParameter("lname");
+                        String birthdate = request.getParameter("birthdate");
+                        String gender = request.getParameter("gender");
+                        String adrs = request.getParameter("address");
                         String email = request.getParameter("email");
                         String pass = request.getParameter("password");
-                        String role = request.getParameter("role");
-                        if(role.equals("Volunteer")){
-                            qry = "SELECT * FROM volunteerLogin WHERE"
-                                    + " volunteerEmail = (?) AND password = (?);";
+                        int id = 0;
+                        Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
+                            ResultSet.CONCUR_READ_ONLY,ResultSet.HOLD_CURSORS_OVER_COMMIT);
+                        ResultSet rst = stmt.executeQuery("SELECT volunteerId FROM Volunteer");
+                        if(rst.last()){
+                            id = rst.getInt("volunteerId")+1;
                         }
-                        else{
-                            qry = "SELECT * FROM OrganizationLogin WHERE"
-                                    + " organizationEmail = (?) AND password = (?);";
-                        }
-                        PreparedStatement prepStmt = conn.prepareStatement(qry);
-                        prepStmt.setString(1,email);
-                        prepStmt.setString(2,pass);
-                        ResultSet rst = prepStmt.executeQuery();
-                        if(rst.next()){
-                            if(role.equals("Volunteer")){
-                               
-                               HttpSession session = request.getSession();
-                               int id = rst.getInt("volunteerId");
-                               session.setAttribute("id", id);
-                               session.setAttribute("role", role);
-                               response.sendRedirect("volunteer.jsp");
-                            }
-                            else{
-                                HttpSession session = request.getSession();
-                                int id = rst.getInt("organizationId");
-                                session.setAttribute("id", id);
-                                session.setAttribute("role", role);
-                                response.sendRedirect("organization.jsp");
-                            }
-                        }
-                        else{
-                            out.println("Login failed successfully");
-                        }
+                        prepStmt.setInt(1,id);
+                        prepStmt.setString (2, firstname);
+                        prepStmt.setString (3, lastname);
+                        SimpleDateFormat formatdate = new SimpleDateFormat("yyyy-MM-dd");
+                        java.util.Date utilDate = formatdate.parse(birthdate);
+                        java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+                        prepStmt.setDate(4, sqlDate);
+                        prepStmt.setString(5, gender);
+                        prepStmt.setString(6, adrs);
+                        prepStmt.setString(7, email);
+                        prepStmt.setString(8, pass);
                         
+                        // execute the preparedstatement
+                        prepStmt.execute();
+                        
+                        response.sendRedirect("login.html");
                     } // end of try
                 }
             }
@@ -108,8 +100,6 @@ public class Login extends HttpServlet {
                 out.println("Exception caught");
                 out.println(e.toString());
             }
-            out.println("</body>");
-            out.println("</html>");
             out.println("</body>");
             out.println("</html>");
         }

@@ -7,23 +7,28 @@ package com.mycompany.moroccovolunteer;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.naming.*;
-import javax.sql.*;
-import java.sql.*;
-import java.text.SimpleDateFormat;
 import javax.servlet.http.HttpSession;
+import javax.sql.DataSource;
 
 /**
  *
- * @author USER
+ * @author johnnyofhyrule93
  */
-@WebServlet(name = "AddEvents", urlPatterns = {"/addevents"})
-public class AddEvents extends HttpServlet {
+@WebServlet(name = "DeleteEvent", urlPatterns = {"/delete-event"})
+public class DeleteEvent extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -37,15 +42,14 @@ public class AddEvents extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
+        try ( PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet AddEvents</title>");            
+            out.println("<title>Servlet DeleteEvent</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Add Event</h1>");
             try {
                 Context ctx = new InitialContext();
                 if (ctx == null) {
@@ -58,38 +62,17 @@ public class AddEvents extends HttpServlet {
                 Connection conn = ds.getConnection();
                 if (conn != null) {
                 // the insert statement
-                String qry = "INSERT INTO Event " + " (eventId, name, Description, eventLocation, eventDate,field, organizationId)"
-                + " VALUES (?, ?, ?, ?, ?, ?, ?);";
+                
+                String qry = "DELETE FROM Event WHERE eventId = (?)" ;
                 // create the insert preparedstatement
-                HttpSession session = request.getSession();
+                int eId = Integer.parseInt(request.getParameter("eventId"));
                 PreparedStatement prepStmt = conn.prepareStatement(qry);
-                String name = request.getParameter("name");
-                String Desc = request.getParameter("Description");
-                String eLocat = request.getParameter("eventLocation");
-                String eDate = request.getParameter("eventDate");
-                String field = request.getParameter("Field");
-                int orgId = (int)session.getAttribute("id");
-                prepStmt.setString (2, name);
-                prepStmt.setString (3, Desc);
-                prepStmt.setString (4, eLocat);
-                prepStmt.setString (6, field);
-                SimpleDateFormat formatdate = new SimpleDateFormat("yyyy-MM-dd");
-                java.util.Date utilDate = formatdate.parse(eDate);
-                java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
-                prepStmt.setDate (5, sqlDate);
-                prepStmt.setInt(7, orgId);
-                int eId = 0;
-                     Statement stmt = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
-                     ResultSet.CONCUR_READ_ONLY,ResultSet.HOLD_CURSORS_OVER_COMMIT);
-                     ResultSet x = stmt.executeQuery("SELECT eventId FROM Event");
-                        if(x.last()){
-                            eId = x.getInt("eventId")+1;
-                        }
+                
                 prepStmt.setInt(1,eId);
                 // execute the preparedstatement
                 prepStmt.execute();
                 out.println("<script type=\"text/javascript\">");
-                out.println("alert('Event added suceessfully');");
+                out.println("alert('Event deleted suceessfully');");
                 out.println("location='orgevents';");
                 out.println("</script>");
             } 
@@ -103,7 +86,6 @@ public class AddEvents extends HttpServlet {
             out.println("Exception caught");
             out.println(e.toString());
             }
-
             out.println("</body>");
             out.println("</html>");
         }

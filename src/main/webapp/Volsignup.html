@@ -29,13 +29,19 @@
       <div class="register-photo">
          <div class="form-container">
             <div class="image-holder"></div>
-            <form method="post" action="orgsignup">
-               <h2 class="text-center"><strong>Become</strong>&nbsp;an Organization.</h2>
-               <div class="form-group"><input class="form-control" type="text" name="name" placeholder="Name"></div>
+            <form method="post" action="volsignup">
+               <h2 class="text-center"><strong>Become</strong>&nbsp;a Volunteer.</h2>
+               <div class="form-group"><input class="form-control" type="text" name="fname" placeholder="First Name"></div>
+               <div class="form-group"><input class="form-control" type="text" name="lname" placeholder="Last Name"></div>
+                <div class="form-group"><input class="form-control" name="birthdate" type="date"></div>
+               
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="gender" id="inlineRadio1" value="M">
+                <label class="form-check-label" for="inlineRadio1">Male</label>
+                <input class="form-check-input" type="radio" name="gender" id="inlineRadio2" value="F">
+                <label class="form-check-label" for="inlineRadio1">Female</label>
+              </div>
                <div class="form-group"><input class="form-control d-flex" type="text" name="address" placeholder="Address" maxlength="160" required=""></div>
-               <div class="form-group"><input class="form-control" name="date" type="date"></div>
-               <div class="form-group"><input class="form-control" type="tel" name="number" placeholder="Phone Number"></div>
-               <div class="form-group"><textarea class="form-control" placeholder="Description" maxlength="160" required="" name="description"></textarea></div>
                <div class="form-group"><input class="form-control" type="email" name="email" placeholder="Email"></div>
                <div class="form-group"><input class="form-control" type="password" name="password" placeholder="Password"></div>
                <div class="form-group"><button class="btn btn-primary btn-block" type="submit" style="background: var(--blue);color: var(--white);filter: brightness(104%) contrast(200%) saturate(200%);">Sign Up</button></div>
