@@ -195,14 +195,18 @@ public class ApplicationPage extends HttpServlet {
                         }
                     } 
                     else {
-                        out.println("Error: conn is null ");
+                        out.println("<script type=\"text/javascript\">");
+                        out.println("alert('Error: conn is null');");
+                        out.println("location='events';");
+                        out.println("</script>");
                     }
                 }
             } 
             catch (Exception e) {
-            //e.printStackTrace();
-            out.println("Exception caught");
-            out.println(e.toString());
+                out.println("<script type=\"text/javascript\">");
+                out.println("alert('Exception caught" + e.toString()+" ');");
+                out.println("location='events';");
+                out.println("</script>");
             }
             out.println("</body>");
             out.println("</html>");
