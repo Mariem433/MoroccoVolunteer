@@ -236,12 +236,16 @@ public class OrgEvents extends HttpServlet {
         }
     }
            catch (SQLException ex) {
-           out.println("SQLException: " + ex);
+                out.println("<script type=\"text/javascript\">");
+                out.println("alert('SQL Exception" + ex+" ');");
+                out.println("location='events';");
+                out.println("</script>");
            }
             catch (Exception e) {
-            //e.printStackTrace();
-            out.println("Exception caught");
-            out.println(e.toString());
+                out.println("<script type=\"text/javascript\">");
+                out.println("alert('Exception caught" + e.toString()+" ');");
+                out.println("location='events';");
+                out.println("</script>");
             }
             out.println("<script src=\"https://code.jquery.com/jquery-3.4.1.slim.min.js\" integrity=\"sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n\" crossorigin=\"anonymous\"></script>\n");
             out.println("<script src=\""+request.getContextPath()+"/assets/bootstrap/js/bootstrap.min.js\"></script>");
