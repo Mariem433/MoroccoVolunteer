@@ -25,8 +25,8 @@ import javax.sql.DataSource;
  *
  * @author johnnyofhyrule93
  */
-@WebServlet(name = "OrgEvents", urlPatterns = {"/orgevents"})
-public class OrgEvents extends HttpServlet {
+@WebServlet(name = "VolEvents", urlPatterns = {"/volevents"})
+public class VolEvents extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -71,9 +71,10 @@ public class OrgEvents extends HttpServlet {
 "            <div class=\"collapse navbar-collapse\" id=\"navcol-1\">\n" +
 "               <ul class=\"navbar-nav ml-auto\">\n" +
 "                  <li class=\"nav-item\"><a class=\"nav-link\" href=\"volunteer.jsp\">Profile</a></li>\n" +
-"                  <li class=\"nav-item\"><a class=\"nav-link\" href=\"orgevent\">Events</a></li>\n" +
-"                  <li class=\"nav-item\"><a class=\"nav-link\" href=\"applications\">applications</a></li>\n" +
-"                  <li class=\"nav-item\"><a class=\"nav-link\" href=\"applications\">volunteers</a></li>\n" +
+"                  <li class=\"nav-item\"><a class=\"nav-link\" href=\"volevents\">Events</a></li>\n" +
+"                  <li class=\"nav-item\"><a class=\"nav-link\" href=\"availabilities\">availabilities</a></li>\n" +
+"                  <li class=\"nav-item\"><a class=\"nav-link\" href=\"applicationpage\">applications</a></li>\n" +
+"                  <li class=\"nav-item\"><a class=\"nav-link\" href=\"requestspage\">requests</a></li>\n" +
 "                  <li class=\"nav-item\"><a class=\"nav-link\" href=\"logout\">logout</a></li>\n" +
 "               </ul>\n" +
 "            </div>\n" +
@@ -89,17 +90,17 @@ public class OrgEvents extends HttpServlet {
                 out.println("<div class=\"product-info\">");
                 out.println("<div>");
                 out.println("<ul class=\"nav nav-tabs\" role=\"tablist\" id=\"myTab\">\n" +
-"                           <li class=\"nav-item\" role=\"presentation\"><a class=\"nav-link\" role=\"tab\" data-toggle=\"tab\" id=\"description-tab\" href=\"#description\">Past Events</a></li>\n" +
-"                           <li class=\"nav-item\" role=\"presentation\"><a class=\"nav-link\" role=\"tab\" data-toggle=\"tab\" id=\"specifications-tabs\" href=\"#specifications\">Current and Upcoming Events</a></li>\n" +
-"                           <li class=\"nav-item\" role=\"presentation\"><a class=\"nav-link active\" role=\"tab\" data-toggle=\"tab\" id=\"reviews-tab\" href=\"#reviews\">Add Event</a></li>\n" +
+"                           <li class=\"nav-item\" role=\"presentation\"><a class=\"nav-link\" role=\"tab\" data-toggle=\"tab\" id=\"events-tab\" href=\"#events\">Apply to Events compatible with your availabilities</a></li>\n" +
+"                           <li class=\"nav-item\" role=\"presentation\"><a class=\"nav-link\" role=\"tab\" data-toggle=\"tab\" id=\"past-tabs\" href=\"#past\">Your Past Events</a></li>\n" +
+//"                           <li class=\"nav-item\" role=\"presentation\"><a class=\"nav-link active\" role=\"tab\" data-toggle=\"tab\" id=\"reviews-tab\" href=\"#reviews\">Add Event</a></li>\n" +
 "                        </ul>");
                 out.println("<div class=\"tab-content\" id=\"myTabContent\">");
-                out.println("<div class=\"tab-pane fade description\" role=\"tabpanel\" id=\"description\">");
+                out.println("<div class=\"tab-pane fade events show active\" role=\"tabpanel\" id=\"events\">");
                 out.println("<div class=\"row justify-content-center\" style=\"margin-top: 5px;margin-right: 0px;margin-left: 0px;\">");
                 Statement stmt1 = conn.createStatement();
                 ResultSet rst1 = stmt1.executeQuery("SELECT "
-                                + "eventId, name, eventlocation, eventdate, field"
-                                + " From Event  WHERE eventdate < CURRENT_DATE AND organizationId ="+id);
+                                + " * FROM vwCompatibleEvents "
+                                + " WHERE volunteerId = "+id);
                 while(rst1.next()){
                     out.println("<div class=\"col-sm-5 col-lg-6\" style=\"margin-top: 35px;\">");
                             out.println("<div class=\"card clean-card text-center\">");
@@ -111,7 +112,7 @@ public class OrgEvents extends HttpServlet {
 "                           <p>Location</p>\n" +
 "                        </div>\n" +
 "                        <div class=\"col\">\n" +
-"                           <p class=\"text-primary\">"+rst1.getString(3)+"</p>\n" +
+"                           <p class=\"text-primary\">"+rst1.getString(5)+"</p>\n" +
 "                        </div>\n" +
 "                     </div>");
                             
@@ -120,7 +121,7 @@ public class OrgEvents extends HttpServlet {
 "                           <p>Date</p>\n" +
 "                        </div>\n" +
 "                        <div class=\"col\">\n" +
-"                           <p class=\"text-primary\">"+rst1.getDate(4)+"</p>\n" +
+"                           <p class=\"text-primary\">"+rst1.getDate(1)+"</p>\n" +
 "                        </div>\n" +
 "                     </div>");
                             out.println("<div class=\"row\">\n" +
@@ -128,13 +129,13 @@ public class OrgEvents extends HttpServlet {
 "                           <p>Field</p>\n" +
 "                        </div>\n" +
 "                        <div class=\"col\">\n" +
-"                           <p class=\"text-primary\">"+rst1.getString(5)+"</p>\n" +
+"                           <p class=\"text-primary\">"+rst1.getString(6)+"</p>\n" +
 "                        </div>\n" +
 "                     </div>");
                             out.println("</div>\n");
                             out.print("<form action='./eventpage'>");
-                            out.print("<input type='hidden' name='eventId' value='" +rst1.getInt(1)+"'>");
-                 out.println(" <button class=\"btn btn-primary overlay\" type=\"submit\"><i class=\"fas fa-plus\"></i>&nbsp;More details</button>\n" +
+                            out.print("<input type='hidden' name='eventId' value='" +rst1.getInt(7)+"'>");
+                 out.println(" <button class=\"btn btn-primary overlay\" type=\"submit\"><i class=\"fas fa-plus\"></i>&nbsp;Check Open Positions</button>\n" +
                          "</form>\n"+
 "               </div>\n" +
 "            </div>\n");
@@ -142,17 +143,26 @@ public class OrgEvents extends HttpServlet {
                 
                 out.println("</div>");
                 out.println("</div>");
-                out.println("<div class=\"tab-pane fade specifications\" role=\"tabpanel\" id=\"specifications\">");
+                out.println("<div class=\"tab-pane fade past\" role=\"tabpanel\" id=\"past\">");
                 out.println("<div class=\"row justify-content-center\" style=\"margin-top: 10px;margin-right: 0px;margin-left: 0px;\">");
                 Statement stmt2 = conn.createStatement();
                 ResultSet rst2 = stmt2.executeQuery("SELECT "
-                                + "eventId, name, eventlocation, eventdate, field"
-                                + " From Event WHERE eventdate >= CURRENT_DATE AND organizationId = "+id+";");
+                                + " * FROM vwVolPastEvents "
+                                + " WHERE volunteerId = "+id);
                 while(rst2.next()){
                 out.println("<div class=\"col-sm-6 col-lg-4\" style=\"margin-top: 35px;\">");
                             out.println("<div class=\"card clean-card text-center\">");
                             out.println("<div class=\"card-body info\">");
-                            out.println("<h4 class=\"card-title\">"+rst2.getString(2)+"</h4>");
+                            out.println("<h4 class=\"card-title\">"+rst2.getString(1)+"</h4>");
+                            
+                            out.println("<div class=\"row\">\n" +
+"                        <div class=\"col\">\n" +
+"                           <p>Organization</p>\n" +
+"                        </div>\n" +
+"                        <div class=\"col\">\n" +
+"                           <p class=\"text-primary\">"+rst2.getString(2)+"</p>\n" +
+"                        </div>\n" +
+"                     </div>");
                             
                             out.println("<div class=\"row\">\n" +
 "                        <div class=\"col\">\n" +
@@ -180,44 +190,9 @@ public class OrgEvents extends HttpServlet {
 "                        </div>\n" +
 "                     </div>");
                             out.println("</div>\n");
-                            out.print("<form action='./eventpage'>");
-                            out.print("<input type='hidden' name='eventId' value='" +rst2.getInt(1)+"'>");
-                            out.println(" <button class=\"btn btn-primary overlay\" type=\"submit\"><i class=\"fas fa-plus\"></i>&nbsp;More details</button>\n" +
-                                "</form>\n");
-                            out.print("<form action='delete-event'>");
-                            out.print("<input type='hidden' name='eventId' value='" +rst2.getInt(1)+"'>");
-                            out.println(" <button class=\"btn btn-primary overlay\" type=\"submit\"><i class=\"fas fa-plus\"></i>&nbsp;Delete</button>\n" +
-                                "</form>\n");
                             out.println("</div>\n"+"</div>\n");
                 }
                 out.println("</div>");
-                out.println("</div>");
-                out.println("<div class=\"tab-pane fade show active\" role=\"tabpanel\" id=\"reviews\">\n");
-                out.println("<form method=\"post\" action='addevents'>\n" +
-"                                        <div class=\"form-group\">\n" +
-"                                            <section class=\"clean-block clean-form dark h-100\" style=\"background: rgb(255,255,255);\">\n" +
-"                                                <div class=\"container\" style=\"background: #ffffff;\">\n" +
-"                                                    <div class=\"block-heading\" style=\"padding-top: 0px;\"></div>\n" +
-"                                                    <form action=\"index.html\" method=\"post\" enctype=\"multipart/form-data\" role=\"form\">\n" +
-"                                                        <div class=\"form-group\"><label>Name*</label><input class=\"form-control\" type=\"tel\" placeholder=\"Event Name\" name=\"name\" required=\"\" maxlength=\"160\"></div>\n" +
-"                                                        <div class=\"form-group\"><label>Description</label><input class=\"form-control\" type=\"text\" placeholder=\"Description\" name=\"Description\" required=\"\" maxlength=\"160\"></div>\n" +
-"                                                        <div class=\"form-group\"><label>Location</label><input class=\"form-control\" type=\"text\" placeholder=\"Location\" name=\"eventLocation\" required=\"\" maxlength=\"100\"></div>\n" +
-"                                                        <div class=\"form-group\"><label>Date*</label><input class=\"form-control\" type=\"date\" name=\"eventDate\"></div>\n" +
-"                                                        <div class=\"form-group\"><label>Field*</label><select class=\"form-control states order-alpha\" id=\"stateId\" name=\"Field\" required=\"\">\n" +
-"                                                                <option value=\"Healthcare\">HealthCare</option>\n" +
-"                                                                <option value=\"Education\">Education</option>\n" +
-"                                                                <option value=\"Children\">Children</option>\n" +
-"                                                                <option value=\"Environment\">Environment</option>\n" +
-"                                                                <option value=\"Women Empowerement\">Women Empowerement</option>\n" +
-"                                                                <option value=\"Society\">Society</option>\n" +
-"                                                            </select></div>\n" +
-"                                                        <hr style=\"margin-top: 30px;margin-bottom: 10px;\">\n" +
-"                                                        <div class=\"form-group\"><button class=\"btn btn-primary btn-block\" type=\"submit\"><i class=\"fas fa-plus\"></i>&nbsp;Add Event</button></div>\n" +
-"                                                    </form>\n" +
-"                                                </div>\n" +
-"                                            </section>\n" +
-"                                        </div>\n" +
-"                                    </form>");
                 out.println("</div>");
                 out.println("</div>");
                 out.println("</div>");

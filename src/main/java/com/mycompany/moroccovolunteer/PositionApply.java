@@ -64,7 +64,10 @@ public class PositionApply extends HttpServlet {
                         prepStmt.setInt(2,Integer.parseInt(request.getParameter("positionId")));
                         prepStmt.execute();
                         
-                        response.sendRedirect("login.html");//change this to profile, specifically manage applications
+                        out.println("<script type=\"text/javascript\">");
+                        out.println("alert('Application sent successfully, we will reach back soon');");
+                        out.println("location='applications';");
+                        out.println("</script>");//change this to profile, specifically manage applications
                     } // end of try
                 }
             }

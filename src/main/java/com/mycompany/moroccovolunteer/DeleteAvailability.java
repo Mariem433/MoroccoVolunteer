@@ -67,7 +67,7 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
                 int id = (int)session.getAttribute("id");
                 
                  Statement stmt = conn.createStatement(); 
-                String qry = "DELETE FROM Availability WHERE volunteerId="+id+" AND availabilityDate="+date+";";
+                String qry = "DELETE FROM Availability WHERE volunteerId="+id+" AND availabilityDate='"+date+"';";
                  // Result set get the result of the SQL query  
                  stmt.executeUpdate(qry);
                 //ResultSet rs = stmt.executeQuery(qry); 

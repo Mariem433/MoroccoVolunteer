@@ -17,14 +17,13 @@
     </head>
     <body>
         <nav class="navbar navbar-light navbar-expand-lg fixed-top bg-white clean-navbar">
-            <div class="container"><a class="navbar-brand logo" href="#">VolunteerMorocco</a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+            <div class="container"><a class="navbar-brand logo" href="#">MoroccoVolunteers</a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navcol-1">
                     <ul class="navbar-nav ml-auto">
-                        <li class="nav-item"><a class="nav-link" href="index.html">Profile</a></li>
-                        <li class="nav-item"><a class="nav-link" href="features.html">Manage events</a></li>
-                        <li class="nav-item"><a class="nav-link" href="pricing.html">applications</a></li>
-                        <li class="nav-item"><a class="nav-link" href="about-us.html">volunteers</a></li>
-                        <li class="nav-item"><a class="nav-link" href="contact-us.html">logout</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="index.html">Home</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="Leaderboard.jsp">Leaderboard</a></li>
+                        <li class="nav-item"><a class="nav-link" href="signup.html">Sign up</a></li>
+                        <li class="nav-item"><a class="nav-link" href="login.html">Login</a></li>
                     </ul>
                 </div>
             </div>
@@ -52,7 +51,7 @@
         <main class="page">
             
             <section class="clean-block about-us">
-                <div class="container">
+                <div class="container" style="height: 100vh">
                     <div class="block-heading">
                         <h2 class="text-info">Leaderboard</h2>
                         <p>Here, we honor our most active members. Although, by being here and serving a purpose, we know that we are all winners after all.</p>

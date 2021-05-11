@@ -30,7 +30,7 @@
     %>
     <body>
         <nav class="navbar navbar-light navbar-expand-lg fixed-top bg-white clean-navbar">
-            <div class="container"><a class="navbar-brand logo" href="#">VolunteerMorocco</a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
+            <div class="container"><a class="navbar-brand logo" href="#">MoroccoVolunteers</a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navcol-1">
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item"><a class="nav-link" href="organization.jsp">Profile</a></li>
@@ -75,7 +75,7 @@
         
         <main class="page product-page">
             <section class="clean-block clean-product dark">
-                <div class="container">
+                <div class="container" style="height: 100vh">
                     <div class="block-heading">
                         <h2 class="text-info">Welcome <%=name%> </h2>
                     </div>

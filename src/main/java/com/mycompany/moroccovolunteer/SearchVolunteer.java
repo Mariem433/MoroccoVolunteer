@@ -23,8 +23,8 @@ import javax.sql.DataSource;
  *
  * @author johnnyofhyrule93
  */
-@WebServlet(name = "Volunteers", urlPatterns = {"/volunteers"})
-public class Volunteers extends HttpServlet {
+@WebServlet(name = "SearchVolunteer", urlPatterns = {"/searchvolunteer"})
+public class SearchVolunteer extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -47,7 +47,7 @@ public class Volunteers extends HttpServlet {
             out.println("<link rel=\"stylesheet\" href=\""+request.getContextPath()+"/assets/bootstrap/css/bootstrap.min.css\">");
             out.println("<link rel=\"stylesheet\" href=\"https://cdnjs.cloudflare.com/ajax/libs/baguettebox.js/1.10.0/baguetteBox.min.css\">");
             out.println("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">");
-            out.println("<title>Volunteers</title>");            
+            out.println("<title>Volunteer Search Results</title>");            
             out.println("</head>");
             out.println("<body>");
             try {
@@ -62,22 +62,22 @@ public class Volunteers extends HttpServlet {
                 Connection conn = ds.getConnection();
                if (conn != null) {
                     out.println("<nav class=\"navbar navbar-light navbar-expand-lg fixed-top bg-white clean-navbar\">\n" +
-                    "         <div class=\"container\">\n" +
-                    "            <a class=\"navbar-brand logo\" href=\"#\">MoroccoVolunteers</a><button data-toggle=\"collapse\" class=\"navbar-toggler\" data-target=\"#navcol-1\"><span class=\"sr-only\">Toggle navigation</span><span class=\"navbar-toggler-icon\"></span></button>\n" +
-                    "            <div class=\"collapse navbar-collapse\" id=\"navcol-1\">\n" +
-                    "               <ul class=\"navbar-nav ml-auto\">\n" +
-                    "                  <li class=\"nav-item\"><a class=\"nav-link\" href=\"organization.jsp\">Profile</a></li>\n" +
-                    "                  <li class=\"nav-item\"><a class=\"nav-link\" href=\"\">Events</a></li>\n" +
-                    "                  <li class=\"nav-item\"><a class=\"nav-link\" href=\"volunteers\">Volunteers</a></li>\n" +
-                    "                  <li class=\"nav-item\"><a class=\"nav-link\" href=\"applications\">Applications</a></li>\n" +
-                    "                  <li class=\"nav-item\"><a class=\"nav-link\" href=\"logout\">Logout</a></li>\n" +
-                    "               </ul>\n" +
-                    "            </div>\n" +
-                    "         </div>\n" +
-                    "      </nav>");
+                        "         <div class=\"container\">\n" +
+                        "            <a class=\"navbar-brand logo\" href=\"#\">MoroccoVolunteers</a><button data-toggle=\"collapse\" class=\"navbar-toggler\" data-target=\"#navcol-1\"><span class=\"sr-only\">Toggle navigation</span><span class=\"navbar-toggler-icon\"></span></button>\n" +
+                        "            <div class=\"collapse navbar-collapse\" id=\"navcol-1\">\n" +
+                        "               <ul class=\"navbar-nav ml-auto\">\n" +
+                        "                  <li class=\"nav-item\"><a class=\"nav-link\" href=\"organization.jsp\">Profile</a></li>\n" +
+                        "                  <li class=\"nav-item\"><a class=\"nav-link\" href=\"\">Events</a></li>\n" +
+                        "                  <li class=\"nav-item\"><a class=\"nav-link\" href=\"volunteers\">Volunteers</a></li>\n" +
+                        "                  <li class=\"nav-item\"><a class=\"nav-link\" href=\"applications\">Applications</a></li>\n" +
+                        "                  <li class=\"nav-item\"><a class=\"nav-link\" href=\"logout\">Logout</a></li>\n" +
+                        "               </ul>\n" +
+                        "            </div>\n" +
+                        "         </div>\n" +
+                        "      </nav>");
                     out.println("<main class=\"page catalog-page\">");
                     out.println("<section class=\"clean-block clean-catalog dark\">");
-                    out.println("<div class=\"container\" style=\"height: 100vh\">");
+                    out.println("<div class=\"container\"  style=\"height: 100vh\">");
                     out.println("<div class=\"block-heading\">\n" +
                 "                    <h2 class=\"text-info\">Volunteers</h2>\n" +
                 "                </div>");
@@ -89,7 +89,7 @@ public class Volunteers extends HttpServlet {
                     out.println("<div class=\"filter-item\">");
                     out.println("<h3>Filter by availability</h3>\n" +
 "                                        <div class=\"text-center\">\n" +
-"                                            <form action = 'filtervolunteers'><select class=\"form-control\" style=\"height: 32px;padding-top: 8px;padding-bottom: 3px;font-size: 12px;width: 102%;margin-right: 2px;margin-bottom: 0px;margin-left: -9px;\" name = 'filtervalue'>\n" +
+"                                            <form action = 'filtervolunteers'><select class=\"form-control\" style=\"height: 32px;padding-top: 8px;padding-bottom: 3px;font-size: 12px;width: 102%;margin-right: 2px;margin-bottom: 0px;margin-left: -9px;\" name = 'filtervalue'>\n"+
 "                                                    <option value=\"2\" selected=\"\">All</option>\n" +
 "                                                    <option value=\"1\">Available for at least 1 event</option>\n" +
 "                                                    <option value=\"0\">Not available</option>\n" +
@@ -115,16 +115,18 @@ public class Volunteers extends HttpServlet {
 "                                </div>");
                     out.println("<div class=\"row no-gutters\">");
                     Statement stmt = conn.createStatement();
+                    String target = "%"+request.getParameter("searchfield").toLowerCase()+"%";
                     ResultSet rst = stmt.executeQuery("SELECT V.volunteerID, firstname, lastname,  \n" +
-                                                        "CAST(COALESCE(AVG(volunteerRating),0) AS decimal(8,2)) \n" +
+                                                        "CAST(COALESCE(AVG(volunteerRating),0) AS decimal(8,2))\n" +
                                                         "FROM Volunteer AS V LEFT JOIN VolunteerEndorsement AS VE  \n" +
                                                         "ON V.volunteerId= VE.volunteerId \n" +
+                                                        "WHERE LOWER(CONCAT(firstname, ' ', lastname)) LIKE '"+target+"'\n" +
                                                         "Group By V.volunteerID,firstname, lastname ;");
                     
                     while (rst.next()) {
                         out.print("<div class=\"col-12 col-md-6 col-lg-4\">");
                         out.println("<div class=\"clean-product-item\">");
-                        out.println("<div class=\"product-name\"><a href=\"volunteerinfo?volunteerId="+rst.getInt(1)+"/\">"+rst.getString(2)+" "+rst.getString(3)+"</a></div>");
+                        out.println("<div class=\"product-name\"><a href=\"volunteerinfo?volunteerId="+rst.getInt(1)+"\">"+rst.getString(2)+" "+rst.getString(3)+"</a></div>");
                         out.println("<div class=\"about\">\n" +
 "                                                <div class=\"price\">\n" +
 "                                                    <h5>Rating:" +rst.getDouble(4)+"/10</h5>\n" +

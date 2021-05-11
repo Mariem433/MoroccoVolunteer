@@ -67,7 +67,7 @@ public class AcceptApplication extends HttpServlet {
                                 + " AND volunteerId = "+volunteerId);
                 out.println("<script type=\"text/javascript\">");
                 out.println("alert('Application Accepted Successfully');");
-                out.println("location='applicationpage';");
+                out.println("location='applications';");
                 out.println("</script>");
             } 
         }

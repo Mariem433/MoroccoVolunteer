@@ -21,8 +21,8 @@ import javax.servlet.http.HttpSession;
  *
  * @author USER
  */
-@WebServlet(name = "CancelApplication", urlPatterns = {"/cancelapplication"})
-public class CancelApplication extends HttpServlet {
+@WebServlet(name = "CancelRequest", urlPatterns = {"/rejectrequest"})
+public class RejectRequest extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -62,12 +62,12 @@ public class CancelApplication extends HttpServlet {
                 Statement stmt1 = conn.createStatement();
                 String positionId = request.getParameter("positionId");
                 String volunteerId = request.getParameter("volunteerId");
-                int rst1 = stmt1.executeUpdate("UPDATE Application SET applicationstatus = 'rejected'"
+                int rst1 = stmt1.executeUpdate("UPDATE Request SET requeststatus = 'rejected'"
                                 + " WHERE positionId = "+ positionId
                                 + " AND volunteerId = "+volunteerId);
                 out.println("<script type=\"text/javascript\">");
-                out.println("alert('Application Rejected Successfully');");
-                out.println("location='applicationpage';");
+                out.println("alert('Request Rejected Successfully');");
+                out.println("location='requestpage';");
                 out.println("</script>");
             } 
         }
