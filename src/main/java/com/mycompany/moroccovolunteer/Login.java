@@ -94,19 +94,26 @@ public class Login extends HttpServlet {
                             }
                         }
                         else{
-                            out.println("Login failed successfully");
+                            out.println("<script type=\"text/javascript\">");
+                            out.println("alert('Failed to login: Check password or/and email');");
+                            out.println("location='events';");
+                            out.println("</script>");
                         }
                         
                     } // end of try
                 }
             }
             catch (SQLException ex) {
-                out.println("SQLException: " + ex);
+                out.println("<script type=\"text/javascript\">");
+                out.println("alert('SQL Exception " + ex+" ');");
+                out.println("location='events';");
+                out.println("</script>");
             }
             catch (Exception e) {
-                //e.printStackTrace();
-                out.println("Exception caught");
-                out.println(e.toString());
+                out.println("<script type=\"text/javascript\">");
+                out.println("alert('Exception caught" + e.toString()+" ');");
+                out.println("location='events';");
+                out.println("</script>");
             }
             out.println("</body>");
             out.println("</html>");
