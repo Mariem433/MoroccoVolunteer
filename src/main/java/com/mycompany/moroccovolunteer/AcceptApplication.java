@@ -73,12 +73,17 @@ public class AcceptApplication extends HttpServlet {
         }
     }
            catch (SQLException ex) {
-           out.println("SQLException: " + ex);
+                out.println("<script type=\"text/javascript\">");
+                out.println("alert('Exception caught" + ex +" ');");
+                out.println("location='events';");
+                out.println("</script>");
            }
             catch (Exception e) {
             //e.printStackTrace();
-            out.println("Exception caught");
-            out.println(e.toString());
+                out.println("<script type=\"text/javascript\">");
+                out.println("alert('Exception caught" + e.toString()+" ');");
+                out.println("location='events';");
+                out.println("</script>");
             }
 
             out.println("</body>");
